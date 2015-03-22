@@ -112,7 +112,7 @@ let NERDTreeWinPos='right'
 
 "========= key mapping ==========
 
-map <F2> v]}zf
+map <F2> [{v%zf
 map <F3> zo
 
 map <F4> :Tlist<cr><C-W><C-W>
