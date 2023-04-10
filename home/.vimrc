@@ -21,18 +21,20 @@ set incsearch
 set ignorecase
 set printoptions=portrait:n,wrap:n,duplex:off
 set noeol
-set mouse=a
+set wildmenu
+set wildmode=longest,list,full
+set undofile		" keep an undo file (undo changes after closing)
 "set binary
 
 "set isfname=@,48-57,/,\,.,-,_,+,,,#,$,%,{,},[,],:,@-@,!,~,=
 "set isfname=@,48-57,/,\,.,-,_,+,,,#,$,%,{,},[,],:,@-@,!,~
 
-set background=light
-syntax enable
+syntax on
 set backup
 set backupdir=$HOME/.vim/backup
 set viewdir=$HOME/.vim/view
 set directory=$HOME/.vim/tmp
+set undodir=$HOME/.vim/undo
 if isdirectory(&backupdir) == 0
 	call mkdir(&backupdir, 'p', 0700)
 endif
@@ -42,77 +44,126 @@ endif
 if isdirectory(&directory) == 0
 	call mkdir(&directory, 'p', 0700)
 endif
+if isdirectory(&undodir) == 0
+	call mkdir(&undodir, 'p', 0700)
+endif
 set cmdheight=1
 set laststatus=2
-set fencs=ucs-bom,utf-8,euc-kr.latin1
+set fencs=ucs-bom,utf-8,euc-kr,latin1
 set backspace=indent,eol,start
 
-" GUI options
-"set guifont=Bitstream\ Vera\ Sans\ Mono
-"set guifont=DejaVu\ Sans\ Mono\ 10
-set gfn=Consolas:h9:cANSI
-set pfn=Courier_New:h10
-"width of the display
-"set co=120
-"number of lines in the display
-"set lines=50
+if &t_Co > 2 || has("gui_running")
+	" GUI options
+	"set pfn=Courier_New:h10
+	"set guifont=DejaVu\ Sans\ Mono\ 10
+	"set gfn=Consolas:h9:cANSI
+	set gfn=Consolas_for_Powerline_FixedD:h9:cANSI
+
+	if &gfn != ""
+		"width of the display
+		set co=120
+		"number of lines in the display
+		set lines=50
+
+		"source $VIMRUNTIME/vimrc_example.vim
+		source $VIMRUNTIME/mswin.vim
+		behave mswin
+	else
+		set background=light
+	endif
+endif
 
 
+if &ft == "python"
+	set efm=\ \ File\ \"%f\"\\,\ line\ %l\\,\ %m
+endif
 
-
+au BufNewFile,BufRead *.py  
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
 
 "========= vundle setting =========
-set nocompatible               " be iMproved
-filetype off                   " required!
+set nocompatible               " be iMproved, required
+filetype off                   " required
 
-""set rtp+=~/.vim/bundle/vundle/
-""call vundle#rc()
-"
-"" let Vundle manage Vundle
-"" required! 
-"Bundle 'gmarik/vundle'
-"
-"" vim-scripts repos
-"Bundle 'snipMate'
-"Bundle 'L9'
-"Bundle 'FuzzyFinder'
-"Bundle 'The-NERD-tree'
-"Bundle 'taglist.vim'
-"Bundle 'bufexplorer.zip'
-""Bundle 'DirDiff.vim'
-"
-"Bundle 'Trinity'
-"Bundle 'SrcExpl'
-"
-"Bundle 'bugfixes-to-vim-indent-for-verilog'
-"Bundle 'automatic-for-Verilog'
-"Bundle 'hdl_plugin'
-"Bundle 'signal_dec_VHDL'
-""Bundle 'session.vim'
-"Bundle 'Source-Explorer-srcexpl.vim'
-"Bundle 'Solarized'
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" vim-scripts repos
+Plugin 'snipMate'
+Plugin 'L9'
+Plugin 'FuzzyFinder'
+"Plugin 'The-NERD-tree'
+"Plugin 'taglist.vim'
+Plugin 'bufexplorer.zip'
+"Plugin 'DirDiff.vim'
+
+Plugin 'Trinity'
+Plugin 'SrcExpl'
+
+"Plugin 'bugfixes-to-vim-indent-for-verilog'
+"Plugin 'automatic-for-Verilog'
+"Plugin 'hdl_plugin'
+"Plugin 'signal_dec_VHDL'
+"Plugin 'session.vim'
+"Plugin 'Source-Explorer-srcexpl.vim'
+"Plugin 'Solarized'
 "Bundle 'vim-orgmode'
-"Bundle 'vim-task-org'
-"Bundle 'code2html'
-"Bundle 'minibufexplorerpp'
-"Bundle 'neocomplcache'
+Plugin 'vim-task-org'
+"Plugin 'code2html'
+Plugin 'minibufexplorerpp'
+Plugin 'neocomplcache'
+Plugin 'indentpython'
+Plugin 'python.vim'
+
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'neomake/neomake'
+
+Plugin 'tpope/vim-surround'
+Plugin 'sheerun/vim-polyglot'
+Plugin 'terryma/vim-multiple-cursors'
+"Plugin 'junegunn/fzf'
+
+Plugin 'editsrec'
+Plugin 'srecord.vim'
+Plugin 'srec.vim'
+
+Plugin 'multisearch.vim'
+
+"Plugin 'JuliaEditorSupport/julia-vim'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
 "
-"filetype plugin indent on     " required!
-""
-"" Brief help
-"" :BundleList          - list configured bundles
-"" :BundleInstall(!)    - install(update) bundles
-"" :BundleSearch(!) foo - search(or refresh cache first) for foo
-"" :BundleClean(!)      - confirm(or auto-approve) removal of unused bundles
-""
-"" see :h vundle for more details or wiki for FAQ
-"" NOTE: comments after Bundle command are not allowed..
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
 "
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
 let NERDTreeWinPos='right'
 
 "========= key mapping ==========
 
-map <F2> [{v%zf
+"map <F2> [{v%zf
+map <F2> v]}zf
 map <F3> zo
 
 map <F4> :Tlist<cr><C-W><C-W>
@@ -147,6 +198,17 @@ nmap <C-L> <C-W>l
 
 map ,q :q<CR>	    " Close Current File
 map ,. :cd %/..<CR>	    " change directory to current file located
+
+func! Toggle_wrap()
+	set wrap!
+	if &wrap != 0
+		set guioptions-=b
+	else
+		set guioptions+=b
+	endif
+endfunc
+nmap ,r :call Toggle_wrap()<cr>
+
 "========= switch between file buffers ========
 map ,x :bn!<CR>	  " Switch to Next File Buffer
 map ,z :bp!<CR>	  " Switch to Previous File Buffer
@@ -326,15 +388,15 @@ func! Hv()
     "if (b:hexViewer == 0)
     if (&ft != "xxd")
         let b:hexViewer = 1
-		let b:hexViewer_ft_backup = &ft "b:current_syntax
-		exe "set binary"
+        let b:hexViewer_ft_backup = &ft "b:current_syntax
+        exe "set binary"
         exe "%!xxd -g1 -c16"
-		exe "set ft=xxd"
+        exe "set ft=xxd"
     else
         let b:hexViewer = 0
-		exe "set nobinary"
-        exe "%!xxd -g1 -c16 -r"
-		exe "set ft=" . b:hexViewer_ft_backup
+        exe "set nobinary"
+        exe "%!xxd -r"
+        exe "set ft=" . b:hexViewer_ft_backup
     endif
 endfunc
 nmap ,h :call Hv()<cr>
@@ -364,12 +426,17 @@ nmap ,cf :call CleanClose(0)<cr>
 nmap ,od :e ./<cr>
 
 
+"========= open new tab ============
+nmap ,t :tabnew<cr>
+
+
 "============ project specific settings =============
 if filereadable(".project.vimrc")
 	source .project.vimrc
 endif
 
 
+"========= Solarized setting =========
 " lazy method of appending this onto your .vimrc ":w! >> ~/.vimrc"
 " ------------------------------------------------------------------
 " this block of commands has been autogenerated by solarized.vim and
@@ -399,3 +466,125 @@ endif
 " let g:solarized_diffmode="normal"
 " let g:solarized_hitrail=0
 " let g:solarized_menu=1
+
+
+"TOPIC: Toggling Comment (via functions) {{{2
+"----------------------------------------
+"FUNCTIONS: for toggle comments {{{3
+"FUCNTION: set comment's prefix character based on filetype
+"-----------------------------------------------------------
+function! SetCommentPrefix()
+    let s:comment_prefix = "#"
+    if &filetype == "vim"
+        " for vim, inline comment start with \"
+        let s:comment_prefix = "\""
+    elseif &filetype ==? "c" || &filetype ==? "objc" || &filetype ==? "cpp"
+        let s:comment_prefix = "//"
+    elseif &filetype ==? "python"
+        let s:comment_prefix = "#"
+    elseif &filetype ==? "go"
+        let s:comment_prefix = "//"
+    endif
+endfunction
+
+"FUCNTION: Make given line into Comment
+"----------------------------------------
+function! CommentLine(line_number)
+    call SetCommentPrefix()
+    " remember current cursor position
+    let cpos = getpos(".")
+    " move to seletced line
+    call setpos(".", [0, a:line_number, 0, 0])
+    " just insert comment prefix character at the front of given line
+    exec "normal! I".s:comment_prefix
+     "restore cursor position
+    call setpos(".", cpos)
+endfunction
+
+"FUNCTION: Uncomment given line
+"-------------------------------
+function! UncommentLine(line_number)
+    call SetCommentPrefix()
+    " remember current cursor position
+    let cpos = getpos(".")
+    "move to selected line
+    call setpos(".", [0, a:line_number, 0, 0])
+    " remove comment prefix charactor
+    " !!! use escape() for some languages's prefix eg. C=> "//"
+    exec ".s/".escape(s:comment_prefix, s:comment_prefix[0])."//"
+    " restore cursor position
+    call setpos(".", cpos)
+endfunction
+
+
+"FUNCTION: Check given line number if the line is comment
+"---------------------------------------------------------
+"ARGS: line_number
+"RETURN: 1: the line is comment, 0: the line is not comment
+"-----------------------------------------------------------
+function! CheckIsComment(line_number)
+    call SetCommentPrefix()
+    " check the line for given line number is comment
+    let sl = getline(a:line_number)
+    let c = 0
+    while c < strlen(sl)
+        let d = c + strlen(s:comment_prefix) - 1
+        " sl[c] is space or tabe?
+        if  " \t" =~ sl[c]
+            " ignore indentation
+            " pass
+        elseif sl[(c):(d)] == s:comment_prefix
+            return 1
+        else
+            return 0
+        endif
+        let c += 1
+    endwhile
+    return 0
+endfunction
+
+"FUNCTION: Toogle line comment
+"------------------------------
+function! ToggleCommentLine()
+    "call SetCommentPrefix()
+    let cl = line(".")
+    if CheckIsComment(cl)
+        call UncommentLine(cl)
+    else
+        call CommentLine(cl)
+    endif
+endfunction
+
+
+"FUNCTION: Toggle Range comment
+"-------------------------------
+function! ToggleCommentRange()
+    call SetCommentPrefix()
+    let line_begin = line("'<")
+    let line_end = line("'>")
+    " decide mode with first line in selection
+    let mode_ = CheckIsComment(line_begin)
+    let cpos = getpos(".")
+    let i = line_begin
+    while i < line_end + 1
+        if mode_
+            call UncommentLine(i)
+        else
+            call CommentLine(i)
+        endif
+        let i+=1
+    endwhile
+endfunction
+
+"MAPPING: maps for comment toggling
+"-----------------------------------
+nnoremap <leader>0 :call ToggleCommentLine()<cr>
+nnoremap <leader>\ :call ToggleCommentLine()<cr>
+vnoremap <leader>0 <esc> :call ToggleCommentRange()<cr>
+vnoremap <leader>\ <esc> :call ToggleCommentRange()<cr>
+nnoremap <c-/> :call ToggleCommentLine()<cr>
+nnoremap <c-;> :call ToggleCommentLine()<cr>
+vnoremap <c-/> <esc> :call ToggleCommentRange()<cr>
+
+map ,/ :call ToggleCommentLine()<cr>
+vmap <c-/> <esc> :call ToggleCommentRange()<cr>
